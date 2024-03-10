@@ -1,0 +1,29 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.Toolbar {
+  height:100px;
+  background-color: lightblue;
+}
+
+.MainPane {
+  flex: 1;
+}
+
+.LeftPane {
+  width: 20%;
+  min-width: 100px;
+  background-color: lightgreen;
+}
+
+.Content {
+  display: flex;
+  flex: 1;
+}
