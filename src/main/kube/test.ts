@@ -11,7 +11,7 @@ export const GetPod = async () => {
     const podRes = await k8sApi.listNamespacedPod('default');
     // api.listPodForAllNamespaces()
     log.debug('Pod: ', podRes.body);
-    return podRes.body;
+    return podRes.body.items;
   } catch (err) {
     log.warn(err);
   }

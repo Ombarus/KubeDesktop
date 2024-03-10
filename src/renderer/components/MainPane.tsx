@@ -54,7 +54,7 @@ hostIP: "d",
   ];
   const [data, setData] = useState<PodData[]>(datap);
   //should be memoized or stable
-  const columns = useMemo<MRT_ColumnDef<Person>[]>(
+  const columns = useMemo<MRT_ColumnDef<PodData>[]>(
     () => [
       {
         accessorKey: 'metadata.namespace',

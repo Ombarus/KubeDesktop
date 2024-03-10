@@ -1,11 +1,9 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from 'material-react-table';
-import Loading from './Loading';
-
 
 type PodData = {
   metadata: {
@@ -18,14 +16,13 @@ type PodData = {
   status: {
     hostIP: string;
     phase: string;
-    startTime: Date;
+    startTime: string;
   };
-}
-
+};
 
 const MainPane2 = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [podList, setpodList] = useState<PodData[]>([]);
+  const [data, setData] = useState<PodData[]>([]);
+  //should be memoized or stable
   const columns = useMemo<MRT_ColumnDef<PodData>[]>(
     () => [
       {
@@ -61,46 +58,44 @@ const MainPane2 = () => {
     ],
     [],
   );
-  console.log(`Before ReactTable podList = ${podList}`);
+  useEffect(() => {
+    let dataq = [];
+    window.electron.ipcRenderer.once('get-pod', async (arg) => {
+        console.log(`received ${arg}`);
+
+        const podData : PodData[] = [];
+        Object.values(arg).forEach((pod) => {
+          console.log(`data: name=${pod.metadata.name}, namespace=${pod.metadata.namespace}, node=${pod.spec.nodeName}, ip=${pod.status.hostIP}, status=${pod.status.phase}, t=${pod.status.startTime}`);
+          const data : PodData = {
+            metadata: {
+              name: pod.metadata.name || '',
+              namespace: pod.metadata.namespace || '',
+            },
+            spec: {
+              nodeName: pod.spec.nodeName || '',
+            },
+            status: {
+              hostIP: pod.status.hostIP || '',
+              phase: pod.status.phase || '',
+              startTime: '',
+            },
+          };
+          podData.push(data);
+        });
+        console.log(`And all together : ${podData}`);
+        setData(podData);
+    });
+    window.electron.ipcRenderer.sendMessage('get-pod');
+    //setData(dataq);
+
+  }, []);
+
   const table = useMaterialReactTable({
     columns,
-    podList
+    data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
   });
-  //useEffect(() => {
-  //    window.electron.ipcRenderer.once('get-pod', (arg) => {
-  //        // TODO: handle error when failed to auth/reach k8s
-  //        var data: PodData[] = [];
-  //        console.log(`Received arg: ${arg}`);
-  //        arg.items.forEach(row => {
-  //          console.log(`Reading properties of ${row}`);
-  //          var entry: PodData = {
-  //            metadata: {
-  //              name: row.metadata.name,
-  //              namespace: row.metadata.namespace,
-  //            },
-  //            spec: {
-  //              nodeName: row.spec.nodeName,
-  //            },
-  //            status: {
-  //              hostIP: row.status.hostIP,
-  //              phase: row.status.phase,
-  //              startTime: row.status.startTime,
-  //            }
-  //          };
-  //          data.push(entry);
-  //        });
-  //        setpodList(data);
-  //        setIsLoading(false);
-  //    });
-  //    window.electron.ipcRenderer.sendMessage('get-pod', ['ping']);
-  //}, []);
-  //if (isLoading) {
-  //  console.log(`Laoding===> ${podList}`);
-  //  return <div className="MainPane"><Loading /></div>;
-  //} else {
-    console.log(`tabble==> ${podList}`);
-    return <div className="MainPane"><MaterialReactTable table={table} layoutMode="grid" /></div>;
-  //}
+
+  return <div className="MainPane"><MaterialReactTable table={table} layoutMode="grid" /></div>;
 };
 
 export default MainPane2;
