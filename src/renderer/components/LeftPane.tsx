@@ -5,6 +5,7 @@ import {
   type MRT_ColumnDef,
 } from 'material-react-table';
 import Loading from './Loading';
+import ContextPane from './ContextPane';
 
 
 type PodData = {
@@ -24,7 +25,7 @@ type PodData = {
 
 
 const LeftPane = () => {
-    return <div className="LeftPane"><Loading /></div>;
+    return <div className="LeftPane"><ContextPane/><Loading /></div>;
 };
 
 export default LeftPane;

@@ -14,7 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { GetPod } from './kube/test';
+import { GetPod, GetContexts, SetActiveContext } from './kube/test';
 
 class AppUpdater {
   constructor() {
@@ -33,9 +33,17 @@ ipcMain.on('ipc-example', async (event, arg) => {
 });
 
 ipcMain.on('get-pod', async (event, arg) => {
-  log.info("HELLO ME");
   event.reply('get-pod', await GetPod());
 });
+
+ipcMain.on('set-context', async(event, arg) => {
+  SetActiveContext(arg);
+});
+
+ipcMain.on('get-contexts', async (event, arg) => {
+  event.reply('get-contexts', await GetContexts());
+});
+
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -77,7 +85,7 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
+    width: 1580,
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
