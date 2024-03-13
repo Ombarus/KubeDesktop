@@ -20,8 +20,31 @@ type PodData = {
   };
 };
 
+const parsePod = (arg) => {
+    const podData : PodData[] = [];
+    Object.values(arg).forEach((pod) => {
+      const data : PodData = {
+        metadata: {
+          name: pod.metadata.name || '',
+          namespace: pod.metadata.namespace || '',
+        },
+        spec: {
+          nodeName: pod.spec.nodeName || '',
+        },
+        status: {
+          hostIP: pod.status.hostIP || '',
+          phase: pod.status.phase || '',
+          startTime: '',
+        },
+      };
+      podData.push(data);
+    });
+    return podData;
+}
+
 const MainPane2 = () => {
   const [data, setData] = useState<PodData[]>([]);
+  const [isRefreshing, setRefreshing] = useState<boolean>(true);
   //should be memoized or stable
   const columns = useMemo<MRT_ColumnDef<PodData>[]>(
     () => [
@@ -58,33 +81,23 @@ const MainPane2 = () => {
     ],
     [],
   );
+  window.electron.ipcRenderer.on('set-context', async (arg) => {
+    window.electron.ipcRenderer.once('get-pod', async (arg) => {
+      let podData = parsePod(arg);
+      setData(podData);
+      setRefreshing(false);
+    });
+    setRefreshing(true);
+    window.electron.ipcRenderer.sendMessage('get-pod');
+  });
   useEffect(() => {
     let dataq = [];
     window.electron.ipcRenderer.once('get-pod', async (arg) => {
-        console.log(`received ${arg}`);
-
-        const podData : PodData[] = [];
-        Object.values(arg).forEach((pod) => {
-          console.log(`data: name=${pod.metadata.name}, namespace=${pod.metadata.namespace}, node=${pod.spec.nodeName}, ip=${pod.status.hostIP}, status=${pod.status.phase}, t=${pod.status.startTime}`);
-          const data : PodData = {
-            metadata: {
-              name: pod.metadata.name || '',
-              namespace: pod.metadata.namespace || '',
-            },
-            spec: {
-              nodeName: pod.spec.nodeName || '',
-            },
-            status: {
-              hostIP: pod.status.hostIP || '',
-              phase: pod.status.phase || '',
-              startTime: '',
-            },
-          };
-          podData.push(data);
-        });
-        console.log(`And all together : ${podData}`);
+        let podData = parsePod(arg);
         setData(podData);
+        setRefreshing(false);
     });
+    setRefreshing(true);
     window.electron.ipcRenderer.sendMessage('get-pod');
     //setData(dataq);
 
@@ -93,6 +106,9 @@ const MainPane2 = () => {
   const table = useMaterialReactTable({
     columns,
     data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    state: {
+      showProgressBars: isRefreshing,
+    }
   });
 
   return <div className="MainPane"><MaterialReactTable table={table} layoutMode="grid" /></div>;

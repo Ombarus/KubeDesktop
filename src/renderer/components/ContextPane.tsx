@@ -17,8 +17,9 @@ const LeftPane = () => {
     useEffect(() => {
       let dataq = [];
       window.electron.ipcRenderer.on('set-context', async (arg) => {
+          console.log(`setCurrentContext ${arg}`);
           setCurrentContext(arg);
-      });
+      })
       window.electron.ipcRenderer.once('get-contexts', async (arg) => {
 
           const contextData = [];
@@ -39,7 +40,7 @@ const LeftPane = () => {
           <Select
             labelId="context-selector-label"
             id="context-selector"
-            value="minikube"
+            value={currentContext}
             onChange={handleChange}
           >
             {contextList}
