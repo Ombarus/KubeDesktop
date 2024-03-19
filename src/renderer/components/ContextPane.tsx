@@ -7,7 +7,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Loading from './Loading';
 
 
-const LeftPane = () => {
+const ContextPane = () => {
     const handleChange = (event: SelectChangeEvent) => {
         window.electron.ipcRenderer.sendMessage('set-context', event.target.value as string);
     };
@@ -51,5 +51,5 @@ const LeftPane = () => {
     );
 };
 
-export default LeftPane;
+export default ContextPane;
 

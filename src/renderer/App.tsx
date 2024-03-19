@@ -1,6 +1,5 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import Toolbar from './components/Toolbar';
-import MainPane2 from './components/MainPane2';
 import MainPane from './components/MainPane';
 import LeftPane from './components/LeftPane';
 import './App.css';
@@ -11,7 +10,7 @@ function Main() {
       <Toolbar />
       <div className="Content">
         <LeftPane />
-        <MainPane2 />
+        <MainPane />
       </div>
     </div>
   );

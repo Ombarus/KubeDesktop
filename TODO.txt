@@ -1,0 +1,15 @@
+Wishlist:
+
+- List all resources (wip)
+- View selected resource description
+- Edit resources (deployment, svc, ingress, etc.)
+- View logs (per service, per pod, per container?)
+- SSH into a pod
+- Helm integration?
+  - list helm deployment
+  - uninstall helm deployment
+
+UX:
+- View connection status (red error?)
+- Resizeable panels
+- Loading/refreshing animation

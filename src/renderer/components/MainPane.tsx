@@ -5,18 +5,6 @@ import {
   type MRT_ColumnDef,
 } from 'material-react-table';
 
-
-//example data type
-type Person = {
-  name: {
-    firstName: string;
-    lastName: string;
-  };
-  address: string;
-  city: string;
-  state: string;
-};
-
 type PodData = {
   metadata: {
     name: string;
@@ -28,31 +16,35 @@ type PodData = {
   status: {
     hostIP: string;
     phase: string;
-    startTime: Date;
+    startTime: string;
   };
+};
+
+const parsePod = (arg) => {
+    const podData : PodData[] = [];
+    Object.values(arg).forEach((pod) => {
+      const data : PodData = {
+        metadata: {
+          name: pod.metadata.name || '',
+          namespace: pod.metadata.namespace || '',
+        },
+        spec: {
+          nodeName: pod.spec.nodeName || '',
+        },
+        status: {
+          hostIP: pod.status.hostIP || '',
+          phase: pod.status.phase || '',
+          startTime: '',
+        },
+      };
+      podData.push(data);
+    });
+    return podData;
 }
 
-//nested data is ok, see accessorKeys in ColumnDef below
-//const data: PodData[] = [];
-
 const MainPane = () => {
-  const datap : PodData[] = [
-  {
-metadata: {
-name: "a",
-        namespace: "b",
-          },
-spec: {
-nodeName: "c",
-      },
-status: {
-hostIP: "d",
-        phase: "e",
-        startTime: "f",
-        }
-  }
-  ];
-  const [data, setData] = useState<PodData[]>(datap);
+  const [data, setData] = useState<PodData[]>([]);
+  const [isRefreshing, setRefreshing] = useState<boolean>(true);
   //should be memoized or stable
   const columns = useMemo<MRT_ColumnDef<PodData>[]>(
     () => [
@@ -88,67 +80,40 @@ hostIP: "d",
       },
     ],
     [],
-    //() => [
-    //  {
-    //    accessorKey: 'name.firstName', //access nested data with dot notation
-    //    header: 'First Name',
-    //    size: 200,
-    //    minSize: 100,
-    //    maxSize: 300,
-    //    grow: true,
-    //  },
-    //  {
-    //    accessorKey: 'name.lastName',
-    //    header: 'Last Name',
-    //    size: 150,
-    //    grow: true,
-    //  },
-    //  {
-    //    accessorKey: 'address', //normal accessorKey
-    //    header: 'Address',
-    //    size: 200,
-    //  },
-    //  {
-    //    accessorKey: 'city',
-    //    header: 'City',
-    //    size: 150,
-    //  },
-    //  {
-    //    accessorKey: 'state',
-    //    header: 'State',
-    //    size: 150,
-    //  },
-    //],
-    //[],
   );
+  window.electron.ipcRenderer.on('set-context', async (arg) => {
+    window.electron.ipcRenderer.once('get-pod', async (arg) => {
+      let podData = parsePod(arg);
+      setData(podData);
+      setRefreshing(false);
+    });
+    setRefreshing(true);
+    window.electron.ipcRenderer.sendMessage('get-pod');
+  });
   useEffect(() => {
-    console.log("Test");
-    const dataq : PodData[] = [
-  {
-metadata: {
-name: "aa",
-        namespace: "bb",
-          },
-spec: {
-nodeName: "cc",
-      },
-status: {
-hostIP: "dd",
-        phase: "ee",
-        startTime: "ff",
-        }
-  }
-  ];
-    setData(dataq);
+    let dataq = [];
+    window.electron.ipcRenderer.once('get-pod', async (arg) => {
+        let podData = parsePod(arg);
+        setData(podData);
+        setRefreshing(false);
+    });
+    setRefreshing(true);
+    window.electron.ipcRenderer.sendMessage('get-pod');
+    //setData(dataq);
 
   }, []);
 
   const table = useMaterialReactTable({
     columns,
     data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    enablePagination: false,
+    state: {
+      showProgressBars: isRefreshing,
+    }
   });
 
   return <div className="MainPane"><MaterialReactTable table={table} layoutMode="grid" /></div>;
+  //return <div className="MainPane">hello</div>
 };
 
 export default MainPane;

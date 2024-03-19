@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useRef, useEffect, useState, useMemo, useCallback } from 'react';
+import Drawer from '@mui/material/Drawer';
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -6,86 +7,63 @@ import {
 } from 'material-react-table';
 import Loading from './Loading';
 import ContextPane from './ContextPane';
-
-
-type ResourceData = {
-  categories: Array,
-  group: string,
-  kind: string,
-  name: string,
-  namespaced: boolean,
-  shortNames: Array,
-  singularName: string,
-  version: string,
-};
-
-
-const parseResources = (arg) => {
-    const podResource : resourceData[] = [];
-    Object.values(arg).forEach((res) => {
-      const data : ResourceData = {
-        categories: res.categories,
-        group: res.group,
-        kind: res.kind,
-        name: res.name,
-        namespaced: res.namespaced,
-        shortNames: res.shortNames,
-        singularName: res.singularName,
-        version: res.version,
-      };
-      podResource.push(data);
-    });
-    return podResource;
-}
+import ResourcePane from './ResourcePane';
 
 const LeftPane = () => {
-  const [data, setData] = useState<ResourceData[]>([]);
-  const [isRefreshing, setRefreshing] = useState<boolean>(true);
-  //should be memoized or stable
-  const columns = useMemo<MRT_ColumnDef<ResourceData>[]>(
-    () => [
-      {
-        accessorKey: 'name',
-        header: 'Resource',
-        size: 200,
-      },
-    ],
-    [],
-  );
-  window.electron.ipcRenderer.on('set-context', async (arg) => {
-    window.electron.ipcRenderer.once('get-api-resources', async (arg) => {
-      let podResource = parseResources(arg);
-      setData(podResource);
-      setRefreshing(false);
-    });
-    setRefreshing(true);
-    window.electron.ipcRenderer.sendMessage('get-api-resources');
-  });
-  useEffect(() => {
-    let dataq = [];
-    window.electron.ipcRenderer.once('get-api-resources', async (arg) => {
-        let podResource = parseResources(arg);
-        setData(podResource);
-        setRefreshing(false);
-    });
-    setRefreshing(true);
-    window.electron.ipcRenderer.sendMessage('get-api-resources');
+  const sidebarRef = useRef(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(268);
+
+  const startResizing = useCallback((mouseDownEvent) => {
+    setIsResizing(true);
   }, []);
 
-  const table = useMaterialReactTable({
-    columns,
-    data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
-    state: {
-      showProgressBars: isRefreshing,
-    }
-  });
+  const stopResizing = useCallback( () => {
+    setIsResizing(false);
+  }, []);
 
-  return <div className="LeftPane"><MaterialReactTable table={table} layoutMode="grid" /></div>;
+  const resize = useCallback(
+    (mouseMoveEvent) => {
+      if (isResizing) {
+        setSidebarWidth(
+          mouseMoveEvent.clientX -
+            sidebarRef.current.getBoundingClientRect().left
+        );
+      }
+    },
+    [isResizing]
+  );
+
+  useEffect( () => {
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResizing);
+    return () => {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [resize, stopResizing]);
+
+  return (
+    <Drawer
+      sx={{
+        width: sidebarWidth,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: sidebarWidth,
+          boxSizing: 'border-box',
+        },
+      }}
+      variant="permanent"
+      anchor="left"
+    >
+    //<div className="Leftpane" ref={sidebarRef} style={{width: sidebarWidth }} onMouseDown={(e) => e.preventDefault()}>
+      <div className="Leftpane-Content"><ContextPane /><ResourcePane /></div>
+      <div className="Leftpane-Resizer" onMouseDown={startResizing} />
+    //</div>
+    </Drawer>
+  );
+//  return <div className="LeftPane"><ContextPane /><ResourcePane /></div>;
 };
-
-//const LeftPane = () => {
-//    return <div className="LeftPane"><ContextPane/></div>;
-//};
 
 export default LeftPane;
 
