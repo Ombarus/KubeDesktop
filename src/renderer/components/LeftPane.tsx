@@ -56,10 +56,10 @@ const LeftPane = () => {
       variant="permanent"
       anchor="left"
     >
-    //<div className="Leftpane" ref={sidebarRef} style={{width: sidebarWidth }} onMouseDown={(e) => e.preventDefault()}>
+    <div className="Leftpane" ref={sidebarRef} style={{width: sidebarWidth }} onMouseDown={(e) => e.preventDefault()}>
       <div className="Leftpane-Content"><ContextPane /><ResourcePane /></div>
       <div className="Leftpane-Resizer" onMouseDown={startResizing} />
-    //</div>
+    </div>
     </Drawer>
   );
 //  return <div className="LeftPane"><ContextPane /><ResourcePane /></div>;

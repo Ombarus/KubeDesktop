@@ -9,7 +9,26 @@ let currentContext = kc.getCurrentContext();
 
 let k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
-export const GetPod = async () => {
+export const GetResource = async (resName) => {
+  if (resName == "pods") {
+    const res = await GetPods();
+    return [resName, res];
+  } else if (resName == "configmaps") {
+    const res = await GetConfigMaps();
+    return [resName, res];
+  } else if (resName == "services") {
+    const res = await GetServices();
+    return [resName, res];
+  } else if (resName == "nodes") {
+    const res = await GetNodes();
+    return [resName, res];
+  } else {
+    log.warn(`Unknown Resource ${resName}`);
+    return [resname, []]
+  }
+};
+
+export const GetPods = async () => {
   try {
     kc.setCurrentContext(currentContext);
     k8sApi = kc.makeApiClient(k8s.CoreV1Api);
@@ -59,6 +78,45 @@ export const GetAPIResources = async () => {
     //  log.debug(`R ============> ${r}`);
     //});
 
+  } catch (err) {
+    log.warn(err);
+  }
+  return [];
+};
+
+export const GetConfigMaps = async () => {
+  try {
+    kc.setCurrentContext(currentContext);
+    k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+    const response = await k8sApi.listConfigMapForAllNamespaces();
+    const configMaps = response.body.items;
+    return configMaps;
+  } catch (err) {
+    log.warn(err);
+  }
+  return [];
+};
+
+export const GetServices = async () => {
+  try {
+    kc.setCurrentContext(currentContext);
+    k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+    const response = await k8sApi.listServiceForAllNamespaces();
+    const services = response.body.items;
+    return services;
+  } catch (err) {
+    log.warn(err);
+  }
+  return [];
+};
+
+export const GetNodes = async () => {
+  try {
+    kc.setCurrentContext(currentContext);
+    k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+    const response = await k8sApi.listNode();
+    const nodes = response.body.items;
+    return nodes;
   } catch (err) {
     log.warn(err);
   }

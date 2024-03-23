@@ -14,7 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { GetPod, GetContexts, SetActiveContext, GetAPIResources } from './kube/test';
+import { GetPods, GetContexts, SetActiveContext, GetAPIResources, GetResource } from './kube/test';
 
 class AppUpdater {
   constructor() {
@@ -33,7 +33,7 @@ ipcMain.on('ipc-example', async (event, arg) => {
 });
 
 ipcMain.on('get-pod', async (event, arg) => {
-  event.reply('get-pod', await GetPod());
+  event.reply('get-pod', await GetPods());
 });
 
 ipcMain.on('set-context', async(event, arg) => {
@@ -46,6 +46,10 @@ ipcMain.on('get-contexts', async (event, arg) => {
 
 ipcMain.on('get-api-resources', async (event, arg) => {
   event.reply('get-api-resources', await GetAPIResources());
+});
+
+ipcMain.on('get-resource', async (event, arg) => {
+  event.reply('get-resource', await GetResource(arg));
 });
 
 

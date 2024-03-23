@@ -3,6 +3,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
+  type MRT_RowSelectionState,
 } from 'material-react-table';
 import Loading from './Loading';
 
@@ -39,6 +40,7 @@ const parseResources = (arg) => {
 const ResourcePane = () => {
   const [data, setData] = useState<ResourceData[]>([]);
   const [isRefreshing, setRefreshing] = useState<boolean>(true);
+  const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
   //should be memoized or stable
   const columns = useMemo<MRT_ColumnDef<ResourceData>[]>(
     () => [
@@ -50,6 +52,11 @@ const ResourcePane = () => {
     ],
     [],
   );
+  const rowSelected = (row) => {
+    console.log(`GB: ROW => ${JSON.stringify(row)}`);
+    window.electron.ipcRenderer.sendMessage('get-resource', row.id as string);
+    setRowSelection((prev) => ({[row.id]: !prev[row.id]}));
+  };
   window.electron.ipcRenderer.on('set-context', async (arg) => {
     window.electron.ipcRenderer.once('get-api-resources', async (arg) => {
       let podResource = parseResources(arg);
@@ -74,9 +81,21 @@ const ResourcePane = () => {
     columns,
     data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     enablePagination: false,
+    enableSelectAll: false,
+    enableMultiRowSelection: false,
+    getRowId: (row) => row.name,
+    muiTableBodyRowProps: ({ row }) => ({
+      onClick: () => rowSelected(row),
+      selected: rowSelection[row.id],
+      sx: {
+        crusor: 'pointer',
+      },
+    }),
+    onRowSelectionChange: setRowSelection,
     state: {
       showProgressBars: isRefreshing,
-    }
+      rowSelection,
+    },
   });
 
   return <div className="ResourcePane"><MaterialReactTable table={table} layoutMode="grid" /></div>;
