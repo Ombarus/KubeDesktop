@@ -1,5 +1,8 @@
 import { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Divider from '@mui/material/Divider';
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -44,23 +47,32 @@ const LeftPane = () => {
   }, [resize, stopResizing]);
 
   return (
-    <Drawer
-      sx={{
-        width: sidebarWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: sidebarWidth,
-          boxSizing: 'border-box',
-        },
-      }}
-      variant="permanent"
-      anchor="left"
-    >
-    <div className="Leftpane" ref={sidebarRef} style={{width: sidebarWidth }} onMouseDown={(e) => e.preventDefault()}>
-      <div className="Leftpane-Content"><ContextPane /><ResourcePane /></div>
-      <div className="Leftpane-Resizer" onMouseDown={startResizing} />
-    </div>
-    </Drawer>
+      <Box sx={{
+        width: sidebarWidth + 10}}
+      >
+        <Drawer
+          sx={{
+            width: sidebarWidth,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: sidebarWidth,
+              boxSizing: 'border-box',
+            },
+          }}
+          variant="permanent"
+          anchor="left"
+        >
+          <Toolbar />
+          <Box sx={{ overflow: 'auto' }}>
+            <div className="Leftpane-Content"><ContextPane /><ResourcePane /></div>
+          </Box>
+        </Drawer>
+        <box sx={{
+          width: 10,
+          height: '100vh',
+          cursor: 'col-resize',
+          }} onMouseDown={startResizing} />
+      </Box>
   );
 //  return <div className="LeftPane"><ContextPane /><ResourcePane /></div>;
 };

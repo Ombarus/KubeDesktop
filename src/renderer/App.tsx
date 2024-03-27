@@ -1,18 +1,19 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import Toolbar from './components/Toolbar';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import KToolbar from './components/KToolbar';
 import MainPane from './components/MainPane';
 import LeftPane from './components/LeftPane';
 import './App.css';
 
 function Main() {
   return (
-    <div>
-      <Toolbar />
-      <div className="Content">
-        <LeftPane />
-        <MainPane />
-      </div>
-    </div>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <KToolbar />
+      <LeftPane />
+      <MainPane />
+    </Box>
   );
 }
 
