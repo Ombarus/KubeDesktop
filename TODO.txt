@@ -4,6 +4,7 @@ Wishlist:
 - View selected resource description
 - Edit resources (deployment, svc, ingress, etc.)
 - View logs (per service, per pod, per container?)
+	- save logs (and/or open in external editor?)
 - SSH into a pod
 - Helm integration?
   - list helm deployment

@@ -4,6 +4,7 @@ import {
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from 'material-react-table';
+import { Box } from '@mui/material';
 
 type PodData = {
   metadata: {
@@ -138,7 +139,11 @@ const MainPane = () => {
     }
   });
 
-  return <div className="MainPane"><MaterialReactTable table={table} layoutMode="grid" /></div>;
+  return (
+    <Box className="MainPane" sx={{ display: 'flex', flex: '1' }}>
+      <MaterialReactTable table={table} layoutMode="grid" />
+    </Box>
+  );
   //return <div className="MainPane">hello</div>
 };
 

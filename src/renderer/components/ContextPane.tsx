@@ -33,8 +33,7 @@ const ContextPane = () => {
     }, []);
 
     return (
-    <div className="ContextPane">
-      <Box sx={{ minWidth: 120 }}>
+      <Box className="ContextPane" sx={{ minWidth: 120, display: 'block' }}>
         <FormControl fullWidth>
           <InputLabel id="context-selector-label">Context</InputLabel>
           <Select
@@ -47,7 +46,6 @@ const ContextPane = () => {
           </Select>
         </FormControl>
       </Box>
-    </div>
     );
 };
 

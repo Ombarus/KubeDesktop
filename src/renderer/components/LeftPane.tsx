@@ -47,35 +47,45 @@ const LeftPane = () => {
   }, [resize, stopResizing]);
 
   return (
-      <Box sx={{
-        width: sidebarWidth + 10}}
-      >
-        <Drawer
-          sx={{
-            width: sidebarWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
-              width: sidebarWidth,
-              boxSizing: 'border-box',
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        >
-          <Toolbar />
-          <Box sx={{ overflow: 'auto' }}>
-            <div className="Leftpane-Content"><ContextPane /><ResourcePane /></div>
-          </Box>
-        </Drawer>
-        <box sx={{
-          width: 10,
-          height: '100vh',
-          cursor: 'col-resize',
-          }} onMouseDown={startResizing} />
+    <Box ref={sidebarRef} className="LeftPane" sx={{ width: sidebarWidth, display: 'flex' }} onMouseDown={(e) => e.preventDefault()}>
+      <Box className="LeftPaneContent" sx={{ width: sidebarWidth - 6 }}>
+        <ContextPane />
+        <ResourcePane />
       </Box>
+      <Divider className="DragHandle" orientation="vertical" flexItem sx={{
+        cursor: 'col-resize',
+        width: '6px',
+      }} onMouseDown={startResizing} />
+    </Box>
   );
 //  return <div className="LeftPane"><ContextPane /><ResourcePane /></div>;
 };
 
 export default LeftPane;
 
+      //<Box sx={{
+      //  width: sidebarWidth + 10}}
+      //>
+      //  <Drawer
+      //    sx={{
+      //      width: sidebarWidth,
+      //      flexShrink: 0,
+      //      '& .MuiDrawer-paper': {
+      //        width: sidebarWidth,
+      //        boxSizing: 'border-box',
+      //      },
+      //    }}
+      //    variant="permanent"
+      //    anchor="left"
+      //  >
+      //    <Toolbar />
+      //    <Box sx={{ overflow: 'auto' }}>
+      //      <div className="Leftpane-Content"><ContextPane /><ResourcePane /></div>
+      //    </Box>
+      //  </Drawer>
+      //  <box sx={{
+      //    width: 10,
+      //    height: '100vh',
+      //    cursor: 'col-resize',
+      //    }} onMouseDown={startResizing} />
+      //</Box>

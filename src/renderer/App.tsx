@@ -4,17 +4,20 @@ import CssBaseline from '@mui/material/CssBaseline';
 import KToolbar from './components/KToolbar';
 import MainPane from './components/MainPane';
 import LeftPane from './components/LeftPane';
+import { Layout } from './Layout';
+import { Test } from './Test';
 import './App.css';
 
+//function Main() {
+//  return (
+//    <Test />
+//  );
+//}
+
 function Main() {
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <KToolbar />
-      <LeftPane />
-      <MainPane />
-    </Box>
-  );
+    return (
+      <Layout />
+    );
 }
 
 export default function App() {

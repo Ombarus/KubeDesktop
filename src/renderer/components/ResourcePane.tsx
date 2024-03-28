@@ -5,7 +5,8 @@ import {
   type MRT_ColumnDef,
   type MRT_RowSelectionState,
 } from 'material-react-table';
-import Loading from './Loading';
+import { Box } from '@mui/material';
+
 
 type ResourceData = {
   categories: Array,
@@ -81,6 +82,7 @@ const ResourcePane = () => {
     columns,
     data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     enablePagination: false,
+    enableRowVirtualization: true,
     enableSelectAll: false,
     enableMultiRowSelection: false,
     getRowId: (row) => row.name,
@@ -88,7 +90,7 @@ const ResourcePane = () => {
       onClick: () => rowSelected(row),
       selected: rowSelection[row.id],
       sx: {
-        crusor: 'pointer',
+        cursor: 'pointer',
       },
     }),
     onRowSelectionChange: setRowSelection,
@@ -98,8 +100,11 @@ const ResourcePane = () => {
     },
   });
 
-  return <div className="ResourcePane"><MaterialReactTable table={table} layoutMode="grid" /></div>;
+  return (
+      <MaterialReactTable table={table} />
+  );
 };
 
 export default ResourcePane;
 
+    //<Box className="ResourcePane" sx={{ overflow: 'scroll', display: 'flex', maxHeight:'500px' }}>
