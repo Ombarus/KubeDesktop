@@ -10,6 +10,7 @@ import { Select, FormControl, MenuItem, InputLabel } from '@mui/material';
 import KToolbar from './components/KToolbar';
 import Leftpane from './components/LeftPane';
 import MainPane from './components/MainPane';
+import DetailPane from './components/DetailPane';
 
 export function Test() {
 
@@ -67,27 +68,7 @@ export function Test() {
   });
 
   return (
-    <Box className="Screen" sx={{ display: 'flex', overflow: 'auto', flex: '1', bgcolor: '#CCCCCC' }}>
-      <Box sx={{ display:'flex',flexDirection:'column',width:'200px' }}>
-        <Box sx={{ display:'flex',flex:'1',bgcolor:'#FFCCCC' }}> A </Box>
-        <Box sx={{ display:'flex',flex:'1',bgcolor:'#DDAAAA' }}> B </Box>
-        <Box sx={{ display:'flex',flex:'1',bgcolor:'#BB5555' }}> C </Box>
-      </Box>
-      <Box sx={{ display:'flex',flexDirection:'column',flex:'1' }}>
-        <Box sx={{ display:'flex',bgcolor:'#CCFFCC',height:'200px',minHeight:'200px' }}> D </Box>
-        <Box sx={{ display:'grid',flex:'1',bgcolor:'#AADDAA' }}>
-          <Box sx={{ position:'relative',flex:'1' }}>
-            <MaterialReactTable table={table} />
-          </Box>
-        </Box>
-        <Box sx={{ display:'flex',flex:'1',bgcolor:'#55BB55' }}> F </Box>
-      </Box>
-      <Box sx={{ display:'flex',flexDirection:'column',width:'400px' }}>
-        <Box sx={{ display:'flex',flex:'1',bgcolor:'#CCCCFF' }}> G </Box>
-        <Box sx={{ display:'flex',flex:'1',bgcolor:'#AAAADD' }}> H </Box>
-        <Box sx={{ display:'flex',flex:'1',bgcolor:'#5555BB' }}> I </Box>
-      </Box>
-    </Box>
+    <DetailPane />
   );
 };
           //<MaterialReactTable table={table} />
@@ -151,5 +132,30 @@ export function Test() {
     //  </Box>
     //  <Box className="Footer" sx={{ flex:'1' }}>
     //    Footer
+    //  </Box>
+    //</Box>
+    //
+
+
+
+    //<Box className="Screen" sx={{ display: 'flex', overflow: 'auto', flex: '1', bgcolor: '#CCCCCC' }}>
+    //  <Box sx={{ display:'flex',flexDirection:'column',width:'200px' }}>
+    //    <Box sx={{ display:'flex',flex:'1',bgcolor:'#FFCCCC' }}> A </Box>
+    //    <Box sx={{ display:'flex',flex:'1',bgcolor:'#DDAAAA' }}> B </Box>
+    //    <Box sx={{ display:'flex',flex:'1',bgcolor:'#BB5555' }}> C </Box>
+    //  </Box>
+    //  <Box sx={{ display:'flex',flexDirection:'column',flex:'1' }}>
+    //    <Box sx={{ display:'flex',bgcolor:'#CCFFCC',height:'200px',minHeight:'200px' }}> D </Box>
+    //    <Box sx={{ display:'grid',flex:'1',bgcolor:'#AADDAA' }}>
+    //      <Box sx={{ position:'relative',flex:'1' }}>
+    //        <MaterialReactTable table={table} />
+    //      </Box>
+    //    </Box>
+    //    <Box sx={{ display:'flex',flex:'1',bgcolor:'#55BB55' }}> F </Box>
+    //  </Box>
+    //  <Box sx={{ display:'flex',flexDirection:'column',width:'400px' }}>
+    //    <Box sx={{ display:'flex',flex:'1',bgcolor:'#CCCCFF' }}> G </Box>
+    //    <Box sx={{ display:'flex',flex:'1',bgcolor:'#AAAADD' }}> H </Box>
+    //    <Box sx={{ display:'flex',flex:'1',bgcolor:'#5555BB' }}> I </Box>
     //  </Box>
     //</Box>
