@@ -55,13 +55,15 @@ const makeHeader = (resourceName) => {
     cols.push({
       accessorKey: 'metadata.namespace',
       header: 'Namespace',
-      size: 100,
+      size: 200,
+      grow: 1,
     });
   }
   cols.push({
     accessorKey: 'metadata.name',
     header: 'Name',
-    size: 250
+    size: 250,
+    grow: true,
   });
   if (resourceName == "pods") {
       cols.push({
@@ -134,13 +136,21 @@ const MainPane = () => {
     columns,
     data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     enablePagination: false,
+    enableRowVirtualization: true,
+    enableMultiRowSelection: false,
+    enableColumnResizing: true,
+    muiTableProps: ({ row }) => ({
+      sx: {
+        maxHeight:'calc(100vh - 300px)',
+      },
+    }),
     state: {
       showProgressBars: isRefreshing,
     }
   });
 
   return (
-    <Box className="MainPane" sx={{ display: 'flex', flex: '1' }}>
+    <Box className="MainPane" sx={{ display: 'grid', flex: '1' }}>
       <MaterialReactTable table={table} layoutMode="grid" />
     </Box>
   );

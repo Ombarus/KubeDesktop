@@ -86,6 +86,11 @@ const ResourcePane = () => {
     enableSelectAll: false,
     enableMultiRowSelection: false,
     getRowId: (row) => row.name,
+    muiTableProps: {
+      sx: {
+        maxHeight:'calc(100vh - 250px)',
+      },
+    },
     muiTableBodyRowProps: ({ row }) => ({
       onClick: () => rowSelected(row),
       selected: rowSelection[row.id],
