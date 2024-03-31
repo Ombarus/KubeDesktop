@@ -151,12 +151,7 @@ const MainPane = () => {
   });
 
   return (
-    <Box className="MainPane" sx={{ display: 'grid', flex: '1', flexDirection:'column' }}>
-      <Box className="PodList">
-        <MaterialReactTable table={table} layoutMode="grid" />
-      </Box>
-      <DetailPane />
-    </Box>
+      <MaterialReactTable table={table} layoutMode="grid" />
   );
   //return <div className="MainPane">hello</div>
 };

@@ -16,8 +16,8 @@ import './App.css';
 
 function Main() {
     return (
-//      <Layout />
-      <Test />
+      <Layout />
+//      <Test />
     );
 }
 
