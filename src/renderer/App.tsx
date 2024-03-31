@@ -16,7 +16,8 @@ import './App.css';
 
 function Main() {
     return (
-      <Layout />
+//      <Layout />
+      <Test />
     );
 }
 

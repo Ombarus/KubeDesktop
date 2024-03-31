@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -12,7 +12,67 @@ import Leftpane from './components/LeftPane';
 import MainPane from './components/MainPane';
 import DetailPane from './components/DetailPane';
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height,
+  };
+}
+
 export function Test() {
+  const sidebarRef = useRef(null);
+  const [isSidebarResizing, setIsSidebarResizing] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(200);
+  const detailbarRef = useRef(null);
+  const [isDetailbarResizing, setIsDetailbarResizing] = useState(false);
+  const [detailbarHeight, setDetailbarHeight] = useState(300);
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  const startSidebarResizing = useCallback( (mouseDownEvent) => {
+    setIsSidebarResizing(true);
+  }, []);
+
+  const stopResizing = useCallback( () => {
+    setIsSidebarResizing(false);
+    setIsDetailbarResizing(false);
+  }, []);
+
+  const startDetailbarResizing = useCallback( (mouseDownEvent) => {
+    setIsDetailbarResizing(true);
+  }, []);
+
+  const resize = useCallback(
+    (mouseMoveEvent) => {
+      if (isSidebarResizing) {
+        let newWidth = mouseMoveEvent.clientX - sidebarRef.current.getBoundingClientRect().left
+        if (newWidth > windowDimensions.width / 2.0) {
+          newWidth = windowDimensions.width / 2.0;
+        }
+        if (newWidth < 200) {
+          newWidth = 200;
+        }
+        setSidebarWidth(newWidth);
+      }
+      if (isDetailbarResizing) {
+        let newHeight = getWindowDimensions().height - mouseMoveEvent.clientY;
+        if (newHeight < 100) {
+          newHeight = 100;
+        }
+        if (newHeight > getWindowDimensions().height - 200) {
+          newHeight = getWindowDimensions().height - 200;
+        }
+        console.log(`newHeight ${newHeight}`);
+        setDetailbarHeight(newHeight);
+      }
+    },
+    [isSidebarResizing, isDetailbarResizing]
+  );
+
+  const windowResize = useCallback( () => {
+    setWindowDimensions(getWindowDimensions());
+  }, []);
+
 
   const columns = useMemo<MRT_ColumnDef<ResourceData>[]>(
     () => [
@@ -62,15 +122,78 @@ export function Test() {
     enableRowVirtualization: true,
     muiTableBodyProps: {
       sx: {
-        maxHeight:'calc(100vh - 500px)',
       },
     },
   });
 
+  function mainPaneHeight() {
+    return getWindowDimensions().height - 75 - detailbarHeight;
+  }
+
+  useEffect( () => {
+    window.addEventListener("resize", windowResize);
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResizing);
+    return () => {
+      window.removeEventListener("resize", windowResize);
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [resize, stopResizing]);
+
   return (
-    <DetailPane />
+    <Box className="Screen" sx={{ display: 'flex', overflow: 'auto', flex: '1', bgcolor: '#CCCCCC', flexDirection:'column' }}>
+      <Box className="ToolbarHeader" sx={{ bgcolor: '#FFAAAA', display:'box', height:'75px' }}>
+        <Button variant='outlined' sx={{ margin:'1em' }}>Hello</Button>
+      </Box>
+      <Box className="BottomOfToolbar" sx={{ flex:'1', bgcolor:'#FFFFAA', display:'flex' }}>
+        <Box ref={sidebarRef} className="LeftPane" sx={{ bgcolor:'#AAFFAA', width:sidebarWidth, flex:'1', minWidth:sidebarWidth, maxWidth:sidebarWidth, display:'flex' }} onMouseDown={(e) => e.preventDefault()}>
+          <Box className="LeftPaneContent" sx={{ bgcolor:'#777777', flex:'1', display:'flex', flexDirection:'column', width:sidebarWidth-6 }}>
+            <Box className="ContextPane" sx={{ bgcolor:'#444444', height:'100px' }}>
+              Context
+            </Box>
+            <Box className="ResourcePane" sx={{ bgcolor:'#555555', flex:'1' }}>
+              Resource List
+            </Box>
+          </Box>
+          <Divider className="LeftPaneDragHandle" orientation="vertical" flexItem sx={{
+            cursor: 'col-resize',
+            width: '6px',
+          }} onMouseDown={startSidebarResizing} />
+        </Box>
+        <Box className="MainPane" sx={{ bgcolor:'#AAAAFF', flex:'1' }}>
+          <Box className="PodList" sx={{ bgcolor:'#FFAAFF', flex:'1', height:mainPaneHeight() }}>
+            Pod List
+          </Box>
+          <Divider className="DetailPaneDragHandle" orientation="horizontal" flexItem sx={{
+            cursor: 'row-resize',
+            height: '6px',
+          }} onMouseDown={startDetailbarResizing} />
+          <Box ref={detailbarRef} className="DetailPane" sx={{ bgcolor:'#AAFFFF', height:detailbarHeight, minHeight:detailbarHeight, maxHeight:detailbarHeight}} onMouseDown={(e) => e.preventDefault()}>
+            Detail Pane
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
+          //<Divider className="LeftPaneDragHandle" orientation="vertical" flexItem sx={{
+          //  cursor: 'col-resize',
+          //  width: '6px',
+          //}} onMouseDown={startSidebarResizing} />
+
+
+
+            //<Box className="ContextPane" sx={{ bgcolor:'#66FF66' }}>
+            //  Context Dropdown
+            //</Box>
+            //<Box className="ResourcePane" sx={{ bgcolor:'#22FF22', display:'flex', flex:'1' }}>
+            //  Resource Data
+            //</Box>
+
+
+
+            //<MaterialReactTable table={table} />
           //<MaterialReactTable table={table} />
           //<Box sx={{ bgcolor:'#FFFFFF' }}>
           //  AKLJD<br />FHKS<br />FJHDSLK<br/ >FJHDS<br/ >KLJFH
