@@ -7,6 +7,7 @@ import {
 } from 'material-react-table';
 import { Stack, Box, Typography, Container, Chip, Button, Drawer, Divider } from '@mui/material';
 import { Select, FormControl, MenuItem, InputLabel } from '@mui/material';
+import { Tab, Tabs, Paper } from '@mui/material';
 import KToolbar from './components/KToolbar';
 import Leftpane from './components/LeftPane';
 import MainPane from './components/MainPane';
@@ -28,6 +29,7 @@ export function Test() {
   const [isDetailbarResizing, setIsDetailbarResizing] = useState(false);
   const [detailbarHeight, setDetailbarHeight] = useState(300);
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+  const [tabValue, setTabValue] = useState(0);
 
   const startSidebarResizing = useCallback( (mouseDownEvent) => {
     setIsSidebarResizing(true);
@@ -68,6 +70,10 @@ export function Test() {
     },
     [isSidebarResizing, isDetailbarResizing]
   );
+
+  const changeDetailTab = (event: SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   const windowResize = useCallback( () => {
     setWindowDimensions(getWindowDimensions());
@@ -170,7 +176,37 @@ export function Test() {
             height: '6px',
           }} onMouseDown={startDetailbarResizing} />
           <Box ref={detailbarRef} className="DetailPane" sx={{ bgcolor:'#AAFFFF', height:detailbarHeight, minHeight:detailbarHeight, maxHeight:detailbarHeight}} onMouseDown={(e) => e.preventDefault()}>
-            Detail Pane
+            <Box sx={{  }}>
+              <Tabs value={tabValue} aria-label="Detail tabs" onChange={changeDetailTab}>
+                <Tab label="Events" id="event-tab" aria-controls="event-tabpanel" />
+                <Tab label="Logs" id="logs-tab" aria-controls="logs-tabpanel" />
+                <Tab label="Edit" id="edit-tab" aria-controls="edit-tabpanel" />
+              </Tabs>
+              <Box role="tabpanel" hidden={tabValue !== 0} id="event-tabpanel" aria-labelledby="event-tab">
+                <Paper sx={{ flex:'1' }}>
+                  EVENT TAB
+                </Paper>
+              </Box>
+              <Box role="tabpanel" hidden={tabValue !== 1} id="logs-tabpanel" aria-labelledby="logs-tab">
+                <Paper sx={{ overflow:'scroll', height:detailbarHeight - 50, maxWidth:getWindowDimensions().width - sidebarWidth, whiteSpace:'pre'}}>
+                    LOGS TAB<br />test<br />test<br />asaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    LOGS TAB<br />test<br />test<br />
+                    LOGS TAB<br />test<br />test<br />
+                    LOGS TAB<br />test<br />test<br />
+                    LOGS TAB<br />test<br />test<br />
+                    LOGS TAB<br />test<br />test<br />
+                    LOGS TAB<br />test<br />test<br />
+                    LOGS TAB<br />test<br />test<br />
+                    LOGS TAB<br />test<br />test<br />
+                    LOGS TAB<br />test<br />test<br />
+                </Paper>
+              </Box>
+              <Box role="tabpanel" hidden={tabValue !== 2} id="edit-tabpanel" aria-labelledby="edit-tab">
+                <Paper sx={{ flex:'1' }}>
+                  EDIT TAB
+                </Paper>
+              </Box>
+            </Box>
           </Box>
         </Box>
       </Box>
