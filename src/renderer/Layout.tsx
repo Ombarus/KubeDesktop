@@ -187,7 +187,7 @@ export function Layout() {
         </Box>
         <Box className="MainPane" sx={{ bgcolor:'#AAAAFF', flex:'1' }}>
           <Box className="PodList" sx={{ bgcolor:'#FFAAFF', flex:'1', height:mainPaneHeight(), maxHeight:mainPaneHeight(), minHeight:mainPaneHeight() }}>
-            Main Pane
+            <MainPane />
           </Box>
           <Divider className="DetailPaneDragHandle" orientation="horizontal" flexItem sx={{
             cursor: 'row-resize',

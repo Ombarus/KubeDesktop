@@ -7,6 +7,7 @@ import LeftPane from './components/LeftPane';
 import { Layout } from './Layout';
 import { Test } from './Test';
 import './App.css';
+import { DivPlayground, ResizeDiv, FixedBox } from './Tests';
 
 //function Main() {
 //  return (
@@ -16,6 +17,7 @@ import './App.css';
 
 function Main() {
     return (
+//        <ResizeDiv />
       <Layout />
 //      <Test />
     );
