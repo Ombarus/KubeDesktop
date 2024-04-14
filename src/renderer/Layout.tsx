@@ -59,7 +59,7 @@ export function Layout() {
         setSidebarWidth(newWidth);
       }
       if (isDetailbarResizing) {
-        let newHeight = getWindowDimensions().height - mouseMoveEvent.clientY;
+        let newHeight = mouseMoveEvent.clientY;
         if (newHeight < 100) {
           newHeight = 100;
         }
@@ -135,7 +135,10 @@ export function Layout() {
   });
 
   function mainPaneHeight() {
-    return getWindowDimensions().height - ToolbarHeight - detailbarHeight - 8;
+    return detailbarHeight - DragHandleSize - ToolbarHeight;
+  }
+  function detailPaneHeight() {
+    return getWindowDimensions().height - detailbarHeight - ToolbarHeight
   }
   const ToolbarHeight = 75;
   const ContextHeight = 100;
@@ -185,15 +188,30 @@ export function Layout() {
             width: DragHandleSize,
           }} onMouseDown={startSidebarResizing} />
         </Box>
-        <Box className="MainPane" sx={{ bgcolor:'#AAAAFF', flex:'1' }}>
-          <Box className="PodList" sx={{ bgcolor:'#FFAAFF', flex:'1', height:mainPaneHeight(), maxHeight:mainPaneHeight(), minHeight:mainPaneHeight() }}>
-            <MainPane />
+        <Box className="MainPane" sx={{ bgcolor:'#AAAAFF', flex:'1', flexDirection:'column', minHeight:0 }}>
+          <Box className="PodList" sx={{
+            displaly: 'flex',
+            flexdirection: 'column',
+            minWidth: 0,
+            minHeight: 0,
+            bgcolor:'#FFAAFF',
+            height:mainPaneHeight(),
+            maxHeight:mainPaneHeight(),
+          }}>
+            <MainPane paneHeight={mainPaneHeight() - 165} />
           </Box>
           <Divider className="DetailPaneDragHandle" orientation="horizontal" flexItem sx={{
             cursor: 'row-resize',
             height: DragHandleSize,
           }} onMouseDown={startDetailbarResizing} />
-          <Box ref={detailbarRef} className="DetailPane" sx={{ bgcolor:'#AAFFFF', height:detailbarHeight, minHeight:detailbarHeight, maxHeight:detailbarHeight}} onMouseDown={(e) => e.preventDefault()}>
+          <Box ref={detailbarRef} className="DetailPane" sx={{
+            bgcolor:'#AAFFFF',
+            display: 'flex',
+            flex: '1',
+            height: detailPaneHeight(),
+            minHeight: detailPaneHeight(),
+            maxHeight: detailPaneHeight(),
+          }} onMouseDown={(e) => e.preventDefault()}>
             <Box sx={{  }}>
               <Tabs value={tabValue} aria-label="Detail tabs" onChange={changeDetailTab}>
                 <Tab label="Events" id="event-tab" aria-controls="event-tabpanel" />
@@ -206,7 +224,7 @@ export function Layout() {
                 </Paper>
               </Box>
               <Box role="tabpanel" hidden={tabValue !== 1} id="logs-tabpanel" aria-labelledby="logs-tab">
-                <Paper sx={{ overflow:'scroll', height:detailbarHeight - 50, maxWidth:getWindowDimensions().width - sidebarWidth, whiteSpace:'pre'}}>
+                <Paper sx={{ overflow:'scroll', height:detailPaneHeight(), maxWidth:getWindowDimensions().width - sidebarWidth, whiteSpace:'pre'}}>
                     LOGS TAB<br />test<br />test<br />asaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                     LOGS TAB<br />test<br />test<br />
                     LOGS TAB<br />test<br />test<br />

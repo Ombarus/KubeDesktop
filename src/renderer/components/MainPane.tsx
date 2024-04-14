@@ -111,7 +111,7 @@ const makeHeader = (resourceName) => {
   return cols;
 };
 
-const MainPane = () => {
+const MainPane = ({paneHeight}) => {
   const [data, setData] = useState<PodData[]>([]);
   const [isRefreshing, setRefreshing] = useState<boolean>(true);
   const [selectedResource, setSelectedResource] = useState<string>("pods");
@@ -127,6 +127,7 @@ const MainPane = () => {
       let podData = parsePod(arg[1]);
       setData(podData);
       setRefreshing(false);
+      console.log(`paneHeight: ${paneHeight}`)
     });
     window.electron.ipcRenderer.on('set-context', async (arg) => {
       setRefreshing(true);
@@ -140,9 +141,9 @@ const MainPane = () => {
     enableRowVirtualization: true,
     enableMultiRowSelection: false,
     enableColumnResizing: true,
-    muiTableProps: ({ row }) => ({
+    muiTableBodyProps: () => ({
       sx: {
-        maxHeight:'calc(100vh - 300px)',
+        height: paneHeight,
       },
     }),
     state: {
