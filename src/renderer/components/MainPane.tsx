@@ -115,11 +115,15 @@ const MainPane = ({paneHeight}) => {
   const [data, setData] = useState<PodData[]>([]);
   const [isRefreshing, setRefreshing] = useState<boolean>(true);
   const [selectedResource, setSelectedResource] = useState<string>("pods");
+  const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
   //should be memoized or stable
   const columns = useMemo<MRT_ColumnDef<PodData>[]>(
     () => makeHeader(selectedResource),
     [selectedResource],
   );
+  const rowSelected = (row) => {
+    setRowSelection((prev) => ({[row.id]: !prev[row.id]}));
+  };
   useEffect(() => {
     let dataq = [];
     window.electron.ipcRenderer.on('get-resource', async (arg) => {
@@ -140,7 +144,16 @@ const MainPane = ({paneHeight}) => {
     enablePagination: false,
     enableRowVirtualization: true,
     enableMultiRowSelection: false,
+    enableSelectAll: false,
+    getRowId: (row) => `${row.metadata.name}-${row.metadata.namespace || ''}`,
     enableColumnResizing: true,
+    muiTableBodyRowProps: ({ row }) => ({
+      onClick: () => rowSelected(row),
+      selected: rowSelection[row.id],
+      sx: {
+        cursor: 'pointer',
+      },
+    }),
     muiTableBodyProps: () => ({
       sx: {
         height: paneHeight,
@@ -148,6 +161,7 @@ const MainPane = ({paneHeight}) => {
     }),
     state: {
       showProgressBars: isRefreshing,
+      rowSelection,
     }
   });
 

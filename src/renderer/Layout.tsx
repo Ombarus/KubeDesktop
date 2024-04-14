@@ -29,7 +29,7 @@ export function Layout() {
   const [sidebarWidth, setSidebarWidth] = useState(200);
   const detailbarRef = useRef(null);
   const [isDetailbarResizing, setIsDetailbarResizing] = useState(false);
-  const [detailbarHeight, setDetailbarHeight] = useState(300);
+  const [detailbarHeight, setDetailbarHeight] = useState(600);
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
   const [tabValue, setTabValue] = useState(0);
 
